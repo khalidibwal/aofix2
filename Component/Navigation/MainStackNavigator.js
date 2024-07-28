@@ -11,6 +11,7 @@ import { useAuthEffect } from '../RecoilData/Auth/AuthState';
 import { useRecoilValue } from 'recoil';
 import { authTokenState } from '../RecoilData/Auth/AuthRecoil';
 import VerificationScreen from '../Auth/VerificationScreen';
+import ProfileScreen from '../../View/Profile/Profile';
 
 const Stack = createNativeStackNavigator();
 
@@ -37,6 +38,7 @@ const MainStackNavigator = () => {
         <Stack.Screen name="Detailfix" component={DetailFix} options={{ headerShown: false }} />
         <Stack.Screen name="Maps" component={MapFix} options={{ headerShown: false }} />
         <Stack.Screen name="Chats" component={ChatFix} options={{ headerShown: false }} />
+        <Stack.Screen name="Profile" component={ProfileScreen} options={{ headerShown: false }} />
       </Stack.Navigator>
     </NavigationContainer>
   );

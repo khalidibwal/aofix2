@@ -46,6 +46,10 @@ const MenuScreen = () => {
     navigation.navigate('HomeScreen');
   };
 
+  const profilePage = () =>{
+    navigation.navigate('Profile');
+  }
+
   return (
     <View style={styles.container}>
       <View style={styles.menuRow}>
@@ -60,7 +64,7 @@ const MenuScreen = () => {
         <TouchableOpacity style={styles.menuButton}>
           <Image source={require('../../Assets/Image/Menu/Icons/messages.png')} />
         </TouchableOpacity>
-        <TouchableOpacity style={styles.menuButton}>
+        <TouchableOpacity style={styles.menuButton} onPress={profilePage}>
           <Image source={require('../../Assets/Image/Menu/Icons/avatarIcon2.png')} />
         </TouchableOpacity>
       </View>

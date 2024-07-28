@@ -13,6 +13,7 @@ import { useRecoilState } from 'recoil';
 import { authTokenState } from '../RecoilData/Auth/AuthRecoil';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
+import { showSnackbar } from '../Snackbar/SnackbarAlert';
 
 
 
@@ -50,9 +51,10 @@ const LoginForm = () => {
       setAuthToken(token);
   
       // Navigate to the next screen upon successful login
-      navigation.navigate('verivy');
+      navigation.navigate('HomeScreen');
     } catch (error) {
-      console.error('Login error:', error.response ? error.response.data : error.message);
+      showSnackbar('Login failed. Please check your details and try again', 4000)
+      // console.error('Login error:', error.response ? error.response.data : error.message);
       // Handle login error (e.g., show error message)
     }finally {
       setLoading(false); // Set loading to false after login attempt

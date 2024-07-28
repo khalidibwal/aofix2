@@ -65,7 +65,7 @@ const ChatFix = () => {
           style={styles.avatarIcon}
         />
         <View style={styles.rowItem}>
-          <Text style={styles.listItem}>{technician.usersign.name}</Text>
+          <Text style={styles.listItem}>{technician.serviceproviders.usersign.name}</Text>
           <Text style={styles.listItem}>Tukang</Text>
         </View>
       </View>

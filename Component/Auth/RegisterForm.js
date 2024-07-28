@@ -6,24 +6,28 @@ import {
   TextInput,
   StyleSheet,
   Image,
+  ActivityIndicator
 } from 'react-native';
 import axios from 'axios';
 import { useRecoilState } from 'recoil';
 import { authTokenState } from '../RecoilData/Auth/AuthRecoil';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
+import { showSnackbar } from '../Snackbar/SnackbarAlert';
 
 const RegisterForm = () => {
   const [regisName, setRegisName] = useState('');
   const [loginEmail, setLoginEmail] = useState('');
   const [loginPassword, setLoginPassword] = useState('');
   const [authToken, setAuthToken] = useRecoilState(authTokenState);
+  const [loading, setLoading] = useState(false); // Loading state
   const navigation = useNavigation()
 
   const handleRegis = async() => {
     // const nameLowerCase = regisName.toLowerCase()
     const emailLowerCase = loginEmail.toLowerCase()
     const passwordLowerCase = loginPassword.toLowerCase()
+    setLoading(true);
     try {
       const response = await axios.post(
         'https://x8ki-letl-twmt.n7.xano.io/api:RM_LD_ra/auth/signup',
@@ -31,7 +35,8 @@ const RegisterForm = () => {
           name: regisName,
           username: null,
           password:passwordLowerCase,
-          email: emailLowerCase
+          email: emailLowerCase,
+          isTechnician: true //must change to false if not technician only for temporary
         },
         {
           headers: {
@@ -51,8 +56,11 @@ const RegisterForm = () => {
       // Navigate to the next screen upon successful login
       navigation.navigate('HomeScreen');
     } catch (error) {
-      console.error('Login error:', error.response ? error.response.data : error.message);
+      // console.error('Login error:', error.response ? error.response.data : error.message);
+      showSnackbar('Registration failed. Please check your details and try again',4000)
       // Handle login error (e.g., show error message)
+    } finally{
+      setLoading(false);
     }
   };
   return (
@@ -83,7 +91,11 @@ const RegisterForm = () => {
         placeholderTextColor={'#000000'}
       />
       <TouchableOpacity style={styles.button} onPress={handleRegis}>
-        <Text style={styles.buttonText}>Registration</Text>
+      {loading ? (
+          <ActivityIndicator size="small" color="#ffffff" /> // Show loading spinner
+        ) : (
+          <Text style={styles.buttonText}>Registration</Text>
+        )}
       </TouchableOpacity>
       <TouchableOpacity style={styles.buttonGoogle} onPress={handleRegis}>
         <View style={styles.spacingImage}>

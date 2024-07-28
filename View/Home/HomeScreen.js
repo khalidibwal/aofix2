@@ -27,13 +27,13 @@ const HomeScreen = () => {
   const navigation = useNavigation();
   const authToken = useRecoilValue(authTokenState);
   const setRecoilLocation = useSetRecoilState(UserLocationData);
-  const setUserCity = useSetRecoilState(UserCity)
+  const setUserCity = useSetRecoilState(UserCity);
   const [data, setData] = useState(null);
   const [error, setError] = useState(null);
   const [location, setLocation] = useState({ latitude: null, longitude: null });
   const [cityName, setCityName] = useState('');
   const [usersignId, setUsersignId] = useState(null);
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(false);
 
   const requestLocationPermission = async () => {
     if (Platform.OS === 'android') {
@@ -97,6 +97,46 @@ const HomeScreen = () => {
     }
   };
 
+  const sendServiceProviderData = async () => {
+    try {
+      await axios.post(
+        'https://x8ki-letl-twmt.n7.xano.io/api:RM_LD_ra/serviceproviders',
+        {
+          usersign_id: usersignId
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${authToken}`,
+          },
+        },
+      );
+    } catch (err) {
+      setError(err.message);
+    }
+  };
+
+  const sendServiceLocationData = async () => {
+    try {
+      await axios.post(
+        'https://x8ki-letl-twmt.n7.xano.io/api:RM_LD_ra/service_location',
+        {
+          latitude: location.latitude,
+          longitude: location.longitude,
+          usersign_id: usersignId,
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${authToken}`,
+          },
+        },
+      );
+    } catch (err) {
+      setError(err.message);
+    }
+  };
+
   const fetchCityName = async (latitude, longitude) => {
     try {
       const response = await axios.get(
@@ -121,7 +161,7 @@ const HomeScreen = () => {
   };
 
   useEffect(() => {
-    setLoading(true)
+    setLoading(true);
     const fetchLocationAndData = async () => {
       const hasPermission = await requestLocationPermission();
       if (hasPermission) {
@@ -153,18 +193,24 @@ const HomeScreen = () => {
 
   useEffect(() => {
     if (location.latitude && location.longitude && usersignId) {
-      setLoading(false)
+      setLoading(false);
       sendLocationData();
+      console.log('data homescreen', data)
+      if (data && data.isTechnician) {
+        sendServiceLocationData();
+        sendServiceProviderData();
+      }
     }
   }, [location, usersignId]);
 
-  const nextPageDetail = () =>{
-    navigation.navigate('Detailfix')
+  const nextPageDetail = () => {
+    navigation.navigate('Detailfix');
+  };
+
+  if (loading) {
+    return <LoadingFix />;
   }
 
-  if(loading){
-    return <LoadingFix/>
-  }
   return (
     <View style={styles.container}>
       <Headers />
@@ -180,7 +226,6 @@ const HomeScreen = () => {
         <Text style={styles.locationText}>Fetching location...</Text>
       )}
       <View style={styles.inputContainer}>
-      {/* <Icon name="search" size={20} color="#999" style={styles.searchIcon} /> */}
         <TextInput
           style={styles.input}
           placeholder="Search"
@@ -189,27 +234,27 @@ const HomeScreen = () => {
       </View>
       <View style={styles.rowContainer}>
         <View style={styles.colomContainer}>
-        <Text style={styles.leftText}>Our Available Services</Text>
-        <Text style={styles.leftTextDesc}>Check our latest service list update</Text>
+          <Text style={styles.leftText}>Our Available Services</Text>
+          <Text style={styles.leftTextDesc}>Check our latest service list update</Text>
         </View>
         <TouchableOpacity>
-        <Text style={styles.rightText}>{`See All >`}</Text>
-        </TouchableOpacity>     
-      </View>
-      <View style={styles.buttonContainer}>
-        <TouchableOpacity onPress={nextPageDetail}>
-          <Image source={require('../../Assets/Image/Home/Icons/tukang.png')} style={styles.buttonImage}/>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={nextPageDetail}>
-        <Image source={require('../../Assets/Image/Home/Icons/tanaman2.png')}/>
+          <Text style={styles.rightText}>{`See All >`}</Text>
         </TouchableOpacity>
       </View>
       <View style={styles.buttonContainer}>
         <TouchableOpacity onPress={nextPageDetail}>
-        <Image source={require('../../Assets/Image/Home/Icons/elektronik2.png')}/>
+          <Image source={require('../../Assets/Image/Home/Icons/tukang.png')} style={styles.buttonImage} />
         </TouchableOpacity>
         <TouchableOpacity onPress={nextPageDetail}>
-        <Image source={require('../../Assets/Image/Home/Icons/listrik2.png')}/>
+          <Image source={require('../../Assets/Image/Home/Icons/tanaman2.png')} />
+        </TouchableOpacity>
+      </View>
+      <View style={styles.buttonContainer}>
+        <TouchableOpacity onPress={nextPageDetail}>
+          <Image source={require('../../Assets/Image/Home/Icons/elektronik2.png')} />
+        </TouchableOpacity>
+        <TouchableOpacity onPress={nextPageDetail}>
+          <Image source={require('../../Assets/Image/Home/Icons/listrik2.png')} />
         </TouchableOpacity>
       </View>
       <MenuScreen />
@@ -236,30 +281,30 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     marginTop: 20,
   },
-  colomContainer:{
-    flexDirection:'column',
-    top:5
+  colomContainer: {
+    flexDirection: 'column',
+    top: 5,
   },
   leftText: {
     textAlign: 'left',
     fontSize: 14,
-    fontWeight:'800',
-    right:10,
-    color:'black'
+    fontWeight: '800',
+    right: 10,
+    color: 'black',
   },
   leftTextDesc: {
     textAlign: 'left',
     fontSize: 13,
-    fontWeight:'800',
-    right:10,
+    fontWeight: '800',
+    right: 10,
     color: 'rgba(128, 128, 128, 0.5)',
   },
   rightText: {
     textAlign: 'right',
     fontSize: 13,
     color: 'gray',
-    left:10,
-    top:10
+    left: 10,
+    top: 10,
   },
   mapLogo: {
     width: 12,
@@ -285,7 +330,7 @@ const styles = StyleSheet.create({
     borderRadius: 10, // Makes the corners rounded
     backgroundColor: '#E6E7E9', // Grey background
     paddingHorizontal: 10, // Padding inside the text input
-    color:'black'
+    color: 'black',
   },
   error: {
     color: 'red',
@@ -297,7 +342,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     marginTop: 10,
   },
-  menuContainer:{
+  menuContainer: {
 
   },
   button: {
