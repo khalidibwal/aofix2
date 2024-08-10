@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -10,16 +10,20 @@ import {
   TextInput,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import {useRecoilValue, useSetRecoilState} from 'recoil';
 import axios from 'axios';
 import Geolocation from 'react-native-geolocation-service';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import {
   authTokenState,
   UserLocationData,
+  UserState,
 } from '../../Component/RecoilData/Auth/AuthRecoil';
-import { UserCity } from '../../Component/RecoilData/Home/LocationRecoil';
+import {UserCity} from '../../Component/RecoilData/Home/LocationRecoil';
+import {UserNames} from '../../Component/RecoilData/Home/LocationRecoil';
+import {UserCategory} from '../../Component/RecoilData/Home/CategoryRecoil';
 import Headers from '../../Component/Home/Headers';
-import { useNavigation } from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
 import LoadingFix from '../../Component/Loading/Home/LoadingFix';
 import MenuScreen from '../../Component/Menu/MenuScreen';
 
@@ -28,9 +32,12 @@ const HomeScreen = () => {
   const authToken = useRecoilValue(authTokenState);
   const setRecoilLocation = useSetRecoilState(UserLocationData);
   const setUserCity = useSetRecoilState(UserCity);
+  const setUserID = useSetRecoilState(UserState);
+  const setUserName = useSetRecoilState(UserNames);
+  const setUserCategory = useSetRecoilState(UserCategory);
   const [data, setData] = useState(null);
   const [error, setError] = useState(null);
-  const [location, setLocation] = useState({ latitude: null, longitude: null });
+  const [location, setLocation] = useState({latitude: null, longitude: null});
   const [cityName, setCityName] = useState('');
   const [usersignId, setUsersignId] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -71,6 +78,8 @@ const HomeScreen = () => {
       );
       setData(response.data);
       setUsersignId(response.data.id);
+      setUserID(response.data.id);
+      setUserName(response.data.name);
     } catch (err) {
       setError(err.message);
     }
@@ -102,7 +111,7 @@ const HomeScreen = () => {
       await axios.post(
         'https://x8ki-letl-twmt.n7.xano.io/api:RM_LD_ra/serviceproviders',
         {
-          usersign_id: usersignId
+          usersign_id: usersignId,
         },
         {
           headers: {
@@ -167,9 +176,9 @@ const HomeScreen = () => {
       if (hasPermission) {
         Geolocation.getCurrentPosition(
           position => {
-            const { latitude, longitude } = position.coords;
-            setLocation({ latitude, longitude });
-            setRecoilLocation({ latitude, longitude });
+            const {latitude, longitude} = position.coords;
+            setLocation({latitude, longitude});
+            setRecoilLocation({latitude, longitude});
             fetchCityName(latitude, longitude);
           },
           error => {
@@ -195,7 +204,7 @@ const HomeScreen = () => {
     if (location.latitude && location.longitude && usersignId) {
       setLoading(false);
       sendLocationData();
-      console.log('data homescreen', data)
+      console.log('data homescreen', data);
       if (data && data.isTechnician) {
         sendServiceLocationData();
         sendServiceProviderData();
@@ -203,8 +212,10 @@ const HomeScreen = () => {
     }
   }, [location, usersignId]);
 
-  const nextPageDetail = () => {
+  const nextPageDetail = category => {
+    console.log(category, 'category');
     navigation.navigate('Detailfix');
+    setUserCategory(category);
   };
 
   if (loading) {
@@ -212,62 +223,79 @@ const HomeScreen = () => {
   }
 
   return (
-    <View style={styles.container}>
+    <>
       <Headers />
-      {cityName ? (
-        <View style={styles.headerLocation}>
-          <Image
-            source={require('./../../Assets/Image/Home/Icons/maps.png')}
-            style={[styles.mapLogo, { tintColor: '#5194DB' }]}
+      <View style={styles.container}>
+        {cityName ? (
+          <View style={styles.headerLocation}>
+            <Image
+              source={require('./../../Assets/Image/Home/Icons/maps.png')}
+              style={[styles.mapLogo, {tintColor: '#5194DB'}]}
+            />
+            <Text style={styles.locationText}>{cityName}</Text>
+          </View>
+        ) : (
+          <Text style={styles.locationText}>Fetching location...</Text>
+        )}
+        <View style={styles.inputContainer}>
+          <TextInput
+            style={styles.input}
+            placeholder="Search"
+            placeholderTextColor="#999"
           />
-          <Text style={styles.locationText}>{cityName}</Text>
         </View>
-      ) : (
-        <Text style={styles.locationText}>Fetching location...</Text>
-      )}
-      <View style={styles.inputContainer}>
-        <TextInput
-          style={styles.input}
-          placeholder="Search"
-          placeholderTextColor="#999"
-        />
-      </View>
-      <View style={styles.rowContainer}>
-        <View style={styles.colomContainer}>
-          <Text style={styles.leftText}>Our Available Services</Text>
-          <Text style={styles.leftTextDesc}>Check our latest service list update</Text>
+        <View style={styles.rowContainer}>
+          <View style={styles.colomContainer}>
+            <Text style={styles.leftText}>Our Available Services</Text>
+            <Text style={styles.leftTextDesc}>
+              Check our latest service list update
+            </Text>
+          </View>
+          <TouchableOpacity>
+            <Text style={styles.rightText}>{`See All >`}</Text>
+          </TouchableOpacity>
         </View>
-        <TouchableOpacity>
-          <Text style={styles.rightText}>{`See All >`}</Text>
-        </TouchableOpacity>
+        <View style={styles.buttonContainer}>
+          <TouchableOpacity onPress={() => nextPageDetail(1)}>
+            <Image
+              source={require('../../Assets/Image/Home/Icons/tukang.png')}
+              style={styles.buttonImage}
+            />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => nextPageDetail(2)}>
+            <Image
+              source={require('../../Assets/Image/Home/Icons/tanaman2.png')}
+              style={styles.buttonImage}
+            />
+          </TouchableOpacity>
+        </View>
+        <View style={styles.buttonContainer}>
+          <TouchableOpacity onPress={() => nextPageDetail(3)}>
+            <Image
+              source={require('../../Assets/Image/Home/Icons/elektronik2.png')}
+              style={styles.buttonImage}
+            />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => nextPageDetail(4)}>
+            <Image
+              source={require('../../Assets/Image/Home/Icons/listrik2.png')}
+              style={styles.buttonImage}
+            />
+          </TouchableOpacity>
+        </View>
+        <MenuScreen />
       </View>
-      <View style={styles.buttonContainer}>
-        <TouchableOpacity onPress={nextPageDetail}>
-          <Image source={require('../../Assets/Image/Home/Icons/tukang.png')} style={styles.buttonImage} />
-        </TouchableOpacity>
-        <TouchableOpacity onPress={nextPageDetail}>
-          <Image source={require('../../Assets/Image/Home/Icons/tanaman2.png')} />
-        </TouchableOpacity>
-      </View>
-      <View style={styles.buttonContainer}>
-        <TouchableOpacity onPress={nextPageDetail}>
-          <Image source={require('../../Assets/Image/Home/Icons/elektronik2.png')} />
-        </TouchableOpacity>
-        <TouchableOpacity onPress={nextPageDetail}>
-          <Image source={require('../../Assets/Image/Home/Icons/listrik2.png')} />
-        </TouchableOpacity>
-      </View>
-      <MenuScreen />
-    </View>
+    </>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FAFAFA',
-    alignItems: 'center',
+    backgroundColor: '#fff',
+    alignItems: 'center', // Center content horizontally
     justifyContent: 'flex-start',
+    paddingBottom: 80,
   },
   headerLocation: {
     width: '100%',
@@ -339,14 +367,18 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    // justifyContent: 'space-between',
     marginTop: 10,
   },
-  menuContainer: {
-
+  menuContainer: {},
+  buttonImage:{
+    height:140,
+    width:150,
+    resizeMode:'cover',
+    top:10   
   },
   button: {
-    width: '45%', // Adjust width to fit two buttons per row
+    width: '100%', // Adjust width to fit two buttons per row
     padding: 15,
     backgroundColor: 'rgba(128, 128, 128, 0.5)',
     borderRadius: 10,

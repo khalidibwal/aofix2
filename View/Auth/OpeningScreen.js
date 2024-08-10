@@ -88,6 +88,7 @@ const Styles = StyleSheet.create({
   logo: {
     width: 130,
     height: 130,
+    resizeMode: 'contain',
   },
   logoText: {
     color: '#5194DB',
@@ -152,12 +153,14 @@ const Styles = StyleSheet.create({
     left: 0,
     overflow: 'hidden',
     width: '35%', // Adjust width as needed
-    height: '50%', // Adjust height as needed
+    height: 100, // Adjust height as needed
   },
   cloudImage: {
+    flex:1,
     width: '100%',
-    height: 100, // Adjust height as needed
-    resizeMode: 'cover',
+    height: '100%', // Adjust height as needed
+    resizeMode: 'contain',
+    marginTop: -30
   },
   tnc: {
     fontSize: 10,

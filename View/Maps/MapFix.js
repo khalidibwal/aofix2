@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import {
   View,
   Text,
@@ -7,19 +7,27 @@ import {
   Image,
   TouchableOpacity,
 } from 'react-native';
-import MapView, { PROVIDER_DEFAULT, UrlTile, Marker, Callout, CalloutSubview } from 'react-native-maps';
-import { UserLocationData } from '../../Component/RecoilData/Auth/AuthRecoil';
-import { useRecoilValue } from 'recoil';
-import { useNavigation } from '@react-navigation/native';
+import MapView, {
+  PROVIDER_DEFAULT,
+  UrlTile,
+  Marker,
+  Callout,
+  CalloutSubview,
+} from 'react-native-maps';
+import {UserLocationData} from '../../Component/RecoilData/Auth/AuthRecoil';
+import {useRecoilValue} from 'recoil';
+import {useNavigation} from '@react-navigation/native';
+import {UserCategory} from '../../Component/RecoilData/Home/CategoryRecoil';
 import Headers from '../../Component/Home/Headers';
 import LoadingFix from '../../Component/Loading/Home/LoadingFix';
 import haversineDistance from '../../Component/Map/CheckDistance';
-import { showSnackbar } from '../../Component/Snackbar/SnackbarAlert';
+import {showSnackbar} from '../../Component/Snackbar/SnackbarAlert';
 import axios from 'axios';
 
 const MapScreen = () => {
   const navigation = useNavigation();
   const Location = useRecoilValue(UserLocationData);
+  const Category_id = useRecoilValue(UserCategory);
   const [region, setRegion] = useState({
     latitude: 37.78825,
     longitude: -122.4324,
@@ -50,58 +58,39 @@ const MapScreen = () => {
           'https://x8ki-letl-twmt.n7.xano.io/api:RM_LD_ra/service_location',
         );
         const data = response.data;
-  
+
         // Create a map to track the latest entry for each usersign_id
         const latestTechnicians = data.reduce((acc, tech) => {
           const existingTech = acc[tech.usersign_id];
           // If the technician already exists in the map, check the created_at date
-          if (!existingTech || new Date(tech.created_at) > new Date(existingTech.created_at)) {
+          if (
+            !existingTech ||
+            new Date(tech.created_at) > new Date(existingTech.created_at)
+          ) {
             acc[tech.usersign_id] = tech;
           }
           return acc;
         }, {});
-  
-        // Convert the map back to an array
-        const uniqueTechnicians = Object.values(latestTechnicians);
-  
+
+        // Convert the map back to an array and filter by categories_id
+        const uniqueTechnicians = Object.values(latestTechnicians).filter(
+          tech => tech.serviceproviders.usersign.categories_id === Category_id,
+        );
+
         setTechnicians(uniqueTechnicians);
       } catch (error) {
         // console.error('Error fetching technicians:', error);
-        showSnackbar('Network unstable. Please check your connection and try again.', 4000);
+        showSnackbar(
+          'Network unstable. Please check your connection and try again.',
+          4000,
+        );
       } finally {
         setLoading(false);
       }
     };
-  
+
     fetchTechnicians();
   }, []);
-  
-
-  // useEffect(() => {
-  //   const fetchTechnicians = async () => {
-  //     try {
-  //       // Replace with your API endpoint
-  //       const response = await axios.get(
-  //         'https://x8ki-letl-twmt.n7.xano.io/api:RM_LD_ra/service_location',
-  //       );
-  //       const data = response.data;
-
-  //       // Remove duplicates based on usersign_id
-  //       const uniqueTechnicians = Array.from(
-  //         new Map(data.map(tech => [tech.usersign_id, tech])).values(),
-  //       );
-
-  //       setTechnicians(uniqueTechnicians);
-  //     } catch (error) {
-  //       // console.error('Error fetching technicians:', error);
-  //       showSnackbar('Network unstable. Please check your connection and try again.', 4000)
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   };
-
-  //   fetchTechnicians();
-  // }, []);
 
   if (loading) {
     return <LoadingFix />;
@@ -110,12 +99,15 @@ const MapScreen = () => {
   const handleTechnicianPress = technician => {
     console.log('Technician pressed:', technician);
     if (mapViewRef.current) {
-      mapViewRef.current.animateToRegion({
-        latitude: technician.latitude,
-        longitude: technician.longitude,
-        latitudeDelta: 0.005,
-        longitudeDelta: 0.005,
-      }, 1000); // 1000ms for the animation duration
+      mapViewRef.current.animateToRegion(
+        {
+          latitude: technician.latitude,
+          longitude: technician.longitude,
+          latitudeDelta: 0.005,
+          longitudeDelta: 0.005,
+        },
+        1000,
+      ); // 1000ms for the animation duration
     }
     const markerRef = markersRef.current[technician.usersign_id];
     if (markerRef) {
@@ -124,16 +116,19 @@ const MapScreen = () => {
   };
 
   const handleNavigateToChat = technician => {
-    navigation.navigate('Chats', { data: technician });
+    navigation.navigate('Chats', {data: technician});
   };
   const focusOnUserLocation = () => {
     if (Location?.latitude && Location?.longitude) {
-      mapViewRef.current.animateToRegion({
-        latitude: Location.latitude,
-        longitude: Location.longitude,
-        latitudeDelta: 0.005, // Adjust zoom level as needed
-        longitudeDelta: 0.005, // Adjust zoom level as needed
-      }, 1000); // 1000ms for the animation duration
+      mapViewRef.current.animateToRegion(
+        {
+          latitude: Location.latitude,
+          longitude: Location.longitude,
+          latitudeDelta: 0.005, // Adjust zoom level as needed
+          longitudeDelta: 0.005, // Adjust zoom level as needed
+        },
+        1000,
+      ); // 1000ms for the animation duration
     }
   };
 
@@ -144,89 +139,100 @@ const MapScreen = () => {
 
       {/* Map View */}
       <View style={styles.mapContainer}>
-      <MapView
-        ref={mapViewRef} // Attach the reference to the MapView
-        provider={PROVIDER_DEFAULT}
-        style={styles.map}
-        region={region}
-      >
-        <UrlTile
-          urlTemplate="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          maximumZ={19}
-        />
-        {/* User Location Marker */}
-        <Marker
-          coordinate={{
-            latitude: Location?.latitude || 37.78825,
-            longitude: Location?.longitude || -122.4324,
-          }}
-          title="Your Location"
-          description="This is where you are located."
-        />
-        {/* Technician Markers */}
-        {technicians.map(tech => (
+        <MapView
+          ref={mapViewRef} // Attach the reference to the MapView
+          provider={PROVIDER_DEFAULT}
+          style={styles.map}
+          region={region}>
+          <UrlTile
+            urlTemplate="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+            maximumZ={19}
+          />
+          {/* User Location Marker */}
           <Marker
-            ref={ref => {
-              markersRef.current[tech.usersign_id] = ref;
+            coordinate={{
+              latitude: Location?.latitude || 37.78825,
+              longitude: Location?.longitude || -122.4324,
             }}
-            key={tech.serviceproviders_id} // Unique key for each marker
-            coordinate={{ latitude: tech.latitude, longitude: tech.longitude }}
-            title={tech.serviceproviders.usersign.name || 'unknown Technician'}
-          >
-            <Image
-              source={require('../../Assets/Image/Home/Icons/avatar.png')}
-              style={styles.markerImage}
-            />
-            <Callout onPress={() => handleNavigateToChat(tech)}>
-              <View style={styles.callout}>
-                <Text style={styles.calloutTitle}>{tech.serviceproviders.usersign.name || 'unknown Technician'}</Text>
-                {/* <Text>Technician ID: {tech.usersign_id}</Text> */}
-                <Text>Distance: {haversineDistance(Location, tech)} away</Text>
-                <TouchableOpacity
-                  style={styles.chatButton}
-                  onPress={() => handleNavigateToChat(tech)}
-                >
-                  <Text style={styles.chatButtonText}>Click to Chat</Text>
-                </TouchableOpacity>
-              </View>
-            </Callout>
-          </Marker>
-        ))}
-      </MapView>
-      {/* <TouchableOpacity style={styles.focusButton} onPress={focusOnUserLocation}>
+            title="Your Location"
+            description="This is where you are located."
+          />
+          {/* Technician Markers */}
+          {technicians.map(tech => (
+            <Marker
+              ref={ref => {
+                markersRef.current[tech.usersign_id] = ref;
+              }}
+              key={tech.serviceproviders_id} // Unique key for each marker
+              coordinate={{latitude: tech.latitude, longitude: tech.longitude}}
+              title={
+                tech.serviceproviders.usersign.name || 'unknown Technician'
+              }>
+              <Image
+                source={require('../../Assets/Image/Home/Icons/avatar.png')}
+                style={styles.markerImage}
+              />
+              <Callout onPress={() => handleNavigateToChat(tech)}>
+                <View style={styles.callout}>
+                  <Text style={styles.calloutTitle}>
+                    {tech.serviceproviders.usersign.name ||
+                      'unknown Technician'}
+                  </Text>
+                  {/* <Text>Technician ID: {tech.usersign_id}</Text> */}
+                  <Text style={styles.chatButtonText}>
+                    Distance: {haversineDistance(Location, tech)} away
+                  </Text>
+                  <TouchableOpacity
+                    style={styles.chatButton}
+                    onPress={() => handleNavigateToChat(tech)}>
+                    <Text style={styles.chatButtonText}>Click to Chat</Text>
+                  </TouchableOpacity>
+                </View>
+              </Callout>
+            </Marker>
+          ))}
+        </MapView>
+        {/* <TouchableOpacity style={styles.focusButton} onPress={focusOnUserLocation}>
         <Text style={styles.focusButtonText}>My Location</Text>
       </TouchableOpacity> */}
       </View>
-
-       {/* Focus User Location Button */}
-       
-
+      {/* Focus User Location Button */}
       {/* Footer Component */}
       <View style={styles.technicianList}>
         <Text style={styles.listHeader}>Nearby Technicians:</Text>
         <FlatList
           data={technicians}
           keyExtractor={item => item.usersign_id.toString()}
-          renderItem={({ item }) => (
-            <>
-              {item.serviceproviders.usersign.name ? (
-                <TouchableOpacity onPress={() => handleTechnicianPress(item)}>
-                  <View style={styles.rowContainer}>
-                    <Image
-                      source={require('../../Assets/Image/Home/Icons/avatar.png')}
-                      style={styles.avatarIcon}
-                    />
-                    <View style={styles.rowItem}>
-                      <Text style={styles.listItem}>{item.serviceproviders.usersign.name}</Text>
-                      <Text style={styles.listItem}>Tukang</Text>
+          renderItem={({item}) => {
+            const {
+              serviceproviders: {usersign},
+            } = item;
+            return (
+              <>
+                {usersign.name ? (
+                  <TouchableOpacity onPress={() => handleTechnicianPress(item)}>
+                    <View style={styles.rowContainer}>
+                      <Image
+                        source={require('../../Assets/Image/Home/Icons/avatar.png')}
+                        style={styles.avatarIcon}
+                      />
+                      <View style={styles.rowItem}>
+                        <Text style={styles.listItem}>{usersign.name}</Text>
+                        {usersign.category && (
+                          <Text style={styles.listItem}>
+                            {usersign.category.category_name}
+                          </Text>
+                        )}
+                        {/* <Text style={styles.listItem}>Tukang</Text> */}
+                      </View>
                     </View>
-                  </View>
-                </TouchableOpacity>
-              ) : (
-                <Text>There Are no Technician Nearby</Text>
-              )}
-            </>
-          )}
+                  </TouchableOpacity>
+                ) : (
+                  <Text>There Are no Technicians Nearby</Text>
+                )}
+              </>
+            );
+          }}
         />
       </View>
     </View>
@@ -267,8 +273,8 @@ const styles = StyleSheet.create({
     padding: 15,
     backgroundColor: '#fff',
     maxHeight: 200,
-    borderTopLeftRadius:20,
-    borderTopRightRadius:20
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
   },
   listHeader: {
     fontSize: 18,
@@ -311,6 +317,7 @@ const styles = StyleSheet.create({
   calloutTitle: {
     fontSize: 16,
     fontWeight: 'bold',
+    color: 'black',
   },
   chatButton: {
     marginTop: 10,
@@ -334,6 +341,9 @@ const styles = StyleSheet.create({
   focusButtonText: {
     color: 'white',
     fontSize: 16,
+  },
+  chatButtonText: {
+    color: 'black',
   },
 });
 

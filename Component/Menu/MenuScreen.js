@@ -1,5 +1,5 @@
 import React, { useCallback } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Image, Alert, BackHandler } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Image, Alert, BackHandler, PixelRatio } from 'react-native';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 
 const MenuScreen = () => {
@@ -13,7 +13,7 @@ const MenuScreen = () => {
       return true; // Prevent default back button behavior
     } else {
       Alert.alert(
-        'Exit AOFIX',
+        'Exit AO FIX',
         'Are you sure you want to exit AOFIX?',
         [
           {
@@ -74,22 +74,25 @@ const MenuScreen = () => {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    position: 'absolute', // Fixed positioning
+    bottom: 0,
+    left: 0,
+    width: '100%',
     backgroundColor: '#fff',
     borderRadius: 10,
+    paddingHorizontal: 10,
+    paddingBottom: 10,
+    marginTop:50
   },
   menuRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     width: '100%',
-    paddingHorizontal: 10,
   },
   menuButton: {
     flex: 1,
-    margin: 5,
-    padding: 15,
+    marginHorizontal: 5,
+    padding: PixelRatio.get() <= 2 ? 15 : 10,
     borderRadius: 5,
     alignItems: 'center',
   },

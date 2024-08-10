@@ -6,7 +6,12 @@ import { atom } from 'recoil';
     key: 'UserCity',
     default: null,
   });
+  const UserNames = atom({
+    key: 'UserNames',
+    default: null
+  })
 
 export {
-    UserCity
+    UserCity,
+    UserNames
 }

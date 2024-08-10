@@ -38,7 +38,7 @@ const DetailFix = () => {
             <Text style={styles.textDesc}>Panggil Sekarang</Text>
             <Text style={styles.subTextDesc}>Panggil Sekarang Terdekat</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.buttonMenu}>
+          <TouchableOpacity style={styles.buttonMenu} onPress={()=> navigation.navigate('book')}>
             <Image source={require('../../../Assets/Image/Home/Icons/booking.png')} style={styles.hammerIcon} />
             <Text style={styles.textDesc}>Booking Tanggal</Text>
             <Text style={styles.subTextDesc}>Panggil Sesuai Tanggal</Text>
@@ -107,7 +107,7 @@ const styles = StyleSheet.create({
   hammerIcon: {
     width: 60, // Adjusted size to fit better
     height: 70, // Adjusted size to fit better
-    tintColor: 'white',
+    // tintColor: 'white',
   },
   textDesc: {
     fontWeight: 'bold',

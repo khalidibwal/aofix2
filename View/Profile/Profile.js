@@ -6,10 +6,14 @@ import { authTokenState } from '../../Component/RecoilData/Auth/AuthRecoil';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
 import { showSnackbar } from '../../Component/Snackbar/SnackbarAlert';
+// import { UserState } from '../../Component/RecoilData/Auth/AuthRecoil';
+import { UserNames } from '../../Component/RecoilData/Home/LocationRecoil';
+import { useSetRecoilState, useRecoilValue } from 'recoil';
 
 const Profile = () => {
   const navigation = useNavigation();
   const [authToken, setAuthToken] = useRecoilState(authTokenState);
+  const getUserName = useRecoilValue(UserNames)
 
   const handleSignOut = async () => {
     try {
@@ -27,6 +31,7 @@ const Profile = () => {
 
   return (
     <View style={styles.container}>
+      <Text style={styles.title}>Welcome, {getUserName}</Text>
       <Text style={styles.title}>Profile</Text>
       <TouchableOpacity style={styles.button} onPress={handleSignOut}>
         <Text style={styles.buttonText}>Sign Out</Text>

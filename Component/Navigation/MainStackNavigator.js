@@ -12,6 +12,8 @@ import { useRecoilValue } from 'recoil';
 import { authTokenState } from '../RecoilData/Auth/AuthRecoil';
 import VerificationScreen from '../Auth/VerificationScreen';
 import ProfileScreen from '../../View/Profile/Profile';
+import ProfileFix from '../../View/Profile/ProfileFix';
+import Bookings from '../../View/Home/Detail/Book/Bookings';
 
 const Stack = createNativeStackNavigator();
 
@@ -38,7 +40,8 @@ const MainStackNavigator = () => {
         <Stack.Screen name="Detailfix" component={DetailFix} options={{ headerShown: false }} />
         <Stack.Screen name="Maps" component={MapFix} options={{ headerShown: false }} />
         <Stack.Screen name="Chats" component={ChatFix} options={{ headerShown: false }} />
-        <Stack.Screen name="Profile" component={ProfileScreen} options={{ headerShown: false }} />
+        <Stack.Screen name="Profile" component={ProfileFix} options={{ headerShown: false }} />
+        <Stack.Screen name="book" component={Bookings} options={{ headerShown: false }} />
       </Stack.Navigator>
     </NavigationContainer>
   );

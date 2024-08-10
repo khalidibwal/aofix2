@@ -1,66 +1,65 @@
 import React from 'react';
-import {View, StyleSheet, Image, TouchableOpacity, Text} from 'react-native';
+import { View, StyleSheet, Image, TouchableOpacity, Text, StatusBar } from 'react-native';
 
 const Headers = () => {
   return (
-    <>
+    <View style={styles.headerBackground}>
+      {/* Ensure the status bar has the desired appearance */}
+      <StatusBar barStyle="dark-content" backgroundColor="#fff" />
+      
       <View style={styles.cloudContainer}>
         <Image
           source={require('../../Assets/Image/Auth/cloud.png')}
           style={styles.cloudImage}
         />
       </View>
+      
       <View style={styles.header}>
         <Image
           source={require('./../../Assets/Image/Auth/icon-aofix.png')}
           style={styles.logo}
         />
+        
         <View style={styles.notificationContainer}>
           <TouchableOpacity>
             <Image
               source={require('./../../Assets/Image/Home/Icons/Notification.png')}
-              style={[styles.notifLogo, {tintColor: '#5194DB'}]}
+              style={[styles.notifLogo, { tintColor: '#5194DB' }]}
             />
           </TouchableOpacity>
           <TouchableOpacity>
             <Image
               source={require('./../../Assets/Image/Home/Icons/Plus.png')}
-              style={[styles.notifLogo, {tintColor: '#5194DB'}]}
+              style={[styles.notifLogo, { tintColor: '#5194DB' }]}
             />
           </TouchableOpacity>
         </View>
       </View>
+      
       <View style={styles.logoTextContainer}>
         <Text style={styles.logoText}>AO FIX</Text>
         <Text style={styles.logoDesc}>YOUR FIX BUDDY</Text>
       </View>
-    </>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: 'white',
-    alignItems: 'center',
-    justifyContent: 'flex-start',
+  headerBackground: {
+    backgroundColor: '#fff',
+    paddingTop: 0,  // Removes any extra padding at the top
   },
   header: {
     width: '100%',
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 50,
-  },
-  headerLocation: {
-    width: '100%',
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
+    marginTop: 10,
   },
   logo: {
-    width: 80,
-    height: 80,
+    width: 60,
+    height: 60,
+    resizeMode: 'contain',
   },
   notificationContainer: {
     position: 'absolute',
@@ -73,51 +72,30 @@ const styles = StyleSheet.create({
     height: 25,
     marginLeft: 10,
   },
-  mapLogo: {
-    width: 12,
-    height: 15,
-    right: 10,
-  },
   logoTextContainer: {
     alignItems: 'center',
-    marginTop: 5,
+    // marginTop: 10,
   },
   logoText: {
     color: '#5194DB',
     fontSize: 17,
-    marginTop: 5,
   },
   logoDesc: {
-    marginTop: 5,
+    // marginTop: 5,
     fontSize: 10,
-    color:'black'
-  },
-  locationText: {
-    marginTop: 10,
-    fontSize: 12,
-    color: 'gray',
-    maxWidth: 200,
+    color: '#CBCBCB',
   },
   cloudContainer: {
     position: 'absolute',
     top: 0,
     left: 0,
-    overflow: 'hidden',
     width: '35%',
-    height: '50%',
+    height: 100,
   },
   cloudImage: {
     width: '100%',
-    height: 100,
-    resizeMode: 'cover',
-  },
-  error: {
-    color: 'red',
-    fontSize: 18,
-    textAlign: 'center',
-  },
-  rowItem: {
-    flexDirection: 'row',
+    height: '100%',
+    resizeMode: 'contain',
   },
 });
 
