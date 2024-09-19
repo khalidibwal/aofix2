@@ -61,7 +61,9 @@ const Bookings = () => {
       showSnackbar('Semua Kolom harus terisi', 4000);
     } else {
       // Handle the submission logic here
-      Alert.alert('Success', 'Booking submitted successfully!');
+      // Alert.alert('Success', 'Booking submitted successfully!');
+      navigation.navigate('payment')
+
     }
   };
 

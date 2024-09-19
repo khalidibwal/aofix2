@@ -14,6 +14,9 @@ import VerificationScreen from '../Auth/VerificationScreen';
 import ProfileScreen from '../../View/Profile/Profile';
 import ProfileFix from '../../View/Profile/ProfileFix';
 import Bookings from '../../View/Home/Detail/Book/Bookings';
+import PaymentScreen from '../../View/Transaction/Payment';
+import Congrats from '../../View/Transaction/Congrats';
+import PaymentOnsite from '../../View/Transaction/PaymentOnsite';
 
 const Stack = createNativeStackNavigator();
 
@@ -42,6 +45,9 @@ const MainStackNavigator = () => {
         <Stack.Screen name="Chats" component={ChatFix} options={{ headerShown: false }} />
         <Stack.Screen name="Profile" component={ProfileFix} options={{ headerShown: false }} />
         <Stack.Screen name="book" component={Bookings} options={{ headerShown: false }} />
+        <Stack.Screen name="payment" component={PaymentScreen} options={{ headerShown: false }} />
+        <Stack.Screen name="congrats" component={Congrats} options={{ headerShown: false }} />
+        <Stack.Screen name="onsite" component={PaymentOnsite} options={{ headerShown: false }} />
       </Stack.Navigator>
     </NavigationContainer>
   );

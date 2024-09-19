@@ -118,6 +118,9 @@ const MapScreen = () => {
   const handleNavigateToChat = technician => {
     navigation.navigate('Chats', {data: technician});
   };
+  const handleNavigateToPayment = technician => {
+    navigation.navigate('onsite', {data: technician});
+  };
   const focusOnUserLocation = () => {
     if (Location?.latitude && Location?.longitude) {
       mapViewRef.current.animateToRegion(
@@ -172,7 +175,7 @@ const MapScreen = () => {
                 source={require('../../Assets/Image/Home/Icons/avatar.png')}
                 style={styles.markerImage}
               />
-              <Callout onPress={() => handleNavigateToChat(tech)}>
+              <Callout onPress={() => handleNavigateToPayment(tech)}>
                 <View style={styles.callout}>
                   <Text style={styles.calloutTitle}>
                     {tech.serviceproviders.usersign.name ||
@@ -184,7 +187,7 @@ const MapScreen = () => {
                   </Text>
                   <TouchableOpacity
                     style={styles.chatButton}
-                    onPress={() => handleNavigateToChat(tech)}>
+                    onPress={() => handleNavigateToPayment(tech)}>
                     <Text style={styles.chatButtonText}>Click to Chat</Text>
                   </TouchableOpacity>
                 </View>

@@ -20,7 +20,7 @@ import {
   UserState,
 } from '../../Component/RecoilData/Auth/AuthRecoil';
 import {UserCity} from '../../Component/RecoilData/Home/LocationRecoil';
-import {UserNames} from '../../Component/RecoilData/Home/LocationRecoil';
+import {UserNames, UserEmail} from '../../Component/RecoilData/Home/LocationRecoil';
 import {UserCategory} from '../../Component/RecoilData/Home/CategoryRecoil';
 import Headers from '../../Component/Home/Headers';
 import {useNavigation} from '@react-navigation/native';
@@ -34,6 +34,7 @@ const HomeScreen = () => {
   const setUserCity = useSetRecoilState(UserCity);
   const setUserID = useSetRecoilState(UserState);
   const setUserName = useSetRecoilState(UserNames);
+  const setUserEmail = useSetRecoilState(UserEmail)
   const setUserCategory = useSetRecoilState(UserCategory);
   const [data, setData] = useState(null);
   const [error, setError] = useState(null);
@@ -80,6 +81,7 @@ const HomeScreen = () => {
       setUsersignId(response.data.id);
       setUserID(response.data.id);
       setUserName(response.data.name);
+      setUserEmail(response.data.email);
     } catch (err) {
       setError(err.message);
     }

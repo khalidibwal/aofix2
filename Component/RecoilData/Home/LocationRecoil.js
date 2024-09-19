@@ -10,8 +10,13 @@ import { atom } from 'recoil';
     key: 'UserNames',
     default: null
   })
+  const UserEmail = atom({
+    key: 'UserEmail',
+    default: null
+  })
 
 export {
     UserCity,
-    UserNames
+    UserNames,
+    UserEmail
 }
