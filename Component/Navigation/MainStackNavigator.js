@@ -21,12 +21,14 @@ import PaymentOnsite from '../../View/Transaction/PaymentOnsite';
 import LoadingScreen from '../Loading/Dana/DanaLoading';
 import HeaderFix from '../../View/DANA/HeaderFix';
 import DanaMaster from '../../View/DANA/DanaMaster';
+import SendPayment from '../../View/DANA/Payment/SendPayment';
+import VirtualPayment from '../../View/DANA/Payment/VirtualPayment';
 
 const Stack = createNativeStackNavigator();
 
 const MainStackNavigator = () => {
   const authToken = useRecoilValue(authTokenState);
-  const Dana = useRecoilValue(DanaApps)
+  // const Dana = useRecoilValue(DanaApps)
   useAuthEffect(); // Ensure this is called to handle auth state
   
   // Conditional rendering based on authToken
@@ -35,6 +37,8 @@ const MainStackNavigator = () => {
         <Stack.Navigator>
           <Stack.Screen name="loads" component={LoadingScreen} options={{ headerShown: false }} />
           <Stack.Screen name="master" component={DanaMaster} options={{ headerShown: false }} />
+          <Stack.Screen name="sendpay" component={SendPayment} options={{ headerShown: false }} />
+          <Stack.Screen name="virtual" component={VirtualPayment} options={{ headerShown: false }} />
         </Stack.Navigator>
       </NavigationContainer>
     );

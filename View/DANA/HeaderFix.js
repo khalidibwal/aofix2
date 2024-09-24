@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity, LayoutAnimation, Platform, UIManager } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import MCI from 'react-native-vector-icons/MaterialCommunityIcons';
+
 
 // Enable LayoutAnimation on Android
 if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
@@ -9,11 +11,18 @@ if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental
 
 const HeaderFix = () => {
   const [showAmount, setShowAmount] = useState(true); // State to toggle amount visibility
+  const [myMoney, setMoney] = useState(15200000)
 
   const toggleShowAmount = () => {
     // Animate the layout transition when toggling
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
     setShowAmount(!showAmount); // Toggle visibility
+  };
+  const formatToRupiah = (number) => {
+    return new Intl.NumberFormat('id-ID', {
+      currency: 'IDR',
+      minimumFractionDigits: 0, // Omit decimals, but you can adjust this as needed
+    }).format(number);
   };
 
   return (
@@ -24,7 +33,7 @@ const HeaderFix = () => {
       />
       <Text style={styles.RpText}>Rp</Text>
       <Text style={styles.amountText}>
-        {showAmount ? '57.000.000' : '---'}
+        {showAmount ? formatToRupiah(myMoney) : <MCI name='dots-horizontal' size={30} color='white'/>}
       </Text>
       <TouchableOpacity onPress={toggleShowAmount} style={styles.iconContainer}>
         <MaterialIcons
@@ -66,7 +75,7 @@ const styles = StyleSheet.create({
     right: 5,
   },
   iconContainer: {
-    marginLeft: 10, // Add space between the amount and the eye icon
+    marginLeft: 5, // Add space between the amount and the eye icon
   },
 });
 

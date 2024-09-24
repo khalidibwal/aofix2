@@ -1,12 +1,44 @@
-import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, ScrollView, StyleSheet, Image, Dimensions, TouchableOpacity, TextInput } from 'react-native';
 import HeaderFix from './HeaderFix';
 import FooterMenu from './FooterMenu';
 import Ionicon from 'react-native-vector-icons/Ionicons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Feather from 'react-native-vector-icons/Feather';
+import { useNavigation } from '@react-navigation/native';
+
+const { width: viewportWidth } = Dimensions.get('window');
+
+// Sample carousel items
+const carouselItems = [
+  {
+    title: "Promo 1",
+    image: require('../../Assets/Image/Dana/danapromo.png'),
+  },
+  {
+    title: "Promo 2",
+    image: require('../../Assets/Image/Dana/danapromo2.png'),
+  },
+  {
+    title: "Promo 3",
+    image: require('../../Assets/Image/Dana/danapromo3.png'),
+  },
+];
 
 const DanaMaster = () => {
+  const navigation = useNavigation()
+  const [activeIndex, setActiveIndex] = useState(0);
+
+  const handleScroll = (event) => {
+    const contentOffsetX = event.nativeEvent.contentOffset.x;
+    const index = Math.round(contentOffsetX / viewportWidth);
+    setActiveIndex(index);
+  };
+
+  const SendPay = () =>{
+    navigation.navigate('sendpay')
+  }
+
   return (
     <React.Fragment>
       <HeaderFix />
@@ -14,7 +46,6 @@ const DanaMaster = () => {
         
         {/* Top Section - 30% DANA Color */}
         <View style={styles.topSection}>
-          {/* First Row of Icons Above the Card */}
           <View style={styles.iconRow2}>
             <TouchableOpacity style={styles.iconItem}>
               <MaterialCommunityIcons name="line-scan" size={25} color="white" />
@@ -24,7 +55,7 @@ const DanaMaster = () => {
               <Feather name="plus-square" size={25} color="white" />
               <Text style={styles.iconText}>Top Up</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.iconItem}>
+            <TouchableOpacity style={styles.iconItem} onPress={SendPay}>
               <MaterialCommunityIcons name="qrcode-scan" size={25} color="white" />
               <Text style={styles.iconText}>Send</Text>
             </TouchableOpacity>
@@ -40,36 +71,34 @@ const DanaMaster = () => {
           {/* Card Container with overlap effect */}
           <View style={styles.card}>
             <View style={styles.iconRow}>
-              {/* First Row of Icons Inside the Card */}
               <TouchableOpacity style={styles.iconItem}>
-                <Image source={require('../../Assets/Image/Dana/Danadeals.png')} style={styles.iconImage}/>
+                <Image source={require('../../Assets/Image/Dana/Danadeals.png')} style={styles.iconImage} />
                 <Text style={styles.iconImageText}>Dana Deals</Text>
               </TouchableOpacity>
               <TouchableOpacity style={styles.iconItem}>
-                <Image source={require('../../Assets/Image/Dana/gplay.png')} style={styles.iconImage}/>
-                <Text style={styles.iconImageText}>Google play</Text>
+                <Image source={require('../../Assets/Image/Dana/gplay.png')} style={styles.iconImage} />
+                <Text style={styles.iconImageText}>Google Play</Text>
               </TouchableOpacity>
               <TouchableOpacity style={styles.iconItem}>
-                <Image source={require('../../Assets/Image/Dana/lazada3.png')} style={styles.iconImage}/>
+                <Image source={require('../../Assets/Image/Dana/lazada3.png')} style={styles.iconImage} />
                 <Text style={styles.iconImageText}>Hemat s/d Rp 60rb</Text>
               </TouchableOpacity>
               <TouchableOpacity style={styles.iconItem}>
-                <Image source={require('../../Assets/Image/Dana/games.png')} style={styles.iconImage}/>
+                <Image source={require('../../Assets/Image/Dana/games.png')} style={styles.iconImage} />
                 <Text style={styles.iconImageText}>Games</Text>
               </TouchableOpacity>
             </View>
             <View style={styles.iconRow}>
-              {/* Second Row of Icons Inside the Card */}
               <TouchableOpacity style={styles.iconItem}>
-                <Image source={require('../../Assets/Image/Dana/electricity.png')} style={styles.iconImage}/>
+                <Image source={require('../../Assets/Image/Dana/electricity.png')} style={styles.iconImage} />
                 <Text style={styles.iconImageText}>Electricity</Text>
               </TouchableOpacity>
               <TouchableOpacity style={styles.iconItem}>
-                <Image source={require('../../Assets/Image/Dana/bpjs.png')} style={styles.iconImage}/>
+                <Image source={require('../../Assets/Image/Dana/bpjs.png')} style={styles.iconImage} />
                 <Text style={styles.iconImageText}>Bpjs</Text>
               </TouchableOpacity>
               <TouchableOpacity style={styles.iconItem}>
-                <Image source={require('../../Assets/Image/Dana/kominfo2.png')} style={styles.iconImage}/>
+                <Image source={require('../../Assets/Image/Dana/kominfo2.png')} style={styles.iconImage} />
                 <Text style={styles.iconImageText}>Kominfo</Text>
               </TouchableOpacity>
               <TouchableOpacity style={styles.iconItem}>
@@ -79,25 +108,76 @@ const DanaMaster = () => {
             </View>
           </View>
 
+          {/* Custom Carousel */}
+          
+
           {/* Second Card */}
           <View style={styles.card2}>
             <View style={styles.row}>
-              <Image source={require('../../Assets/Image/Dana/Dana.png')} style={styles.iconImage2}/>
+              <Image source={require('../../Assets/Image/Dana/Dana.png')} style={styles.iconImage2} />
               <Text style={styles.card2Text}>Dana share some update</Text>
               <Text style={styles.card2Time}>11:00</Text>
             </View>
             <View style={styles.row}>
-              <Image source={require('../../Assets/Image/Dana/Dana.png')} style={styles.iconImage2}/>
+              <Image source={require('../../Assets/Image/Dana/Dana.png')} style={styles.iconImage2} />
               <Text style={styles.card2Text}>Dana share some update</Text>
               <Text style={styles.card2Time}>19:30</Text>
             </View>
             <View style={styles.row}>
-              <Image source={require('../../Assets/Image/Dana/Dana.png')} style={styles.iconImage2}/>
+              <Image source={require('../../Assets/Image/Dana/Dana.png')} style={styles.iconImage2} />
               <Text style={styles.card2Text}>Dana share some update</Text>
               <Text style={styles.card2Time}>15:00</Text>
             </View>
           </View>
+          <ScrollView
+            horizontal
+            pagingEnabled
+            showsHorizontalScrollIndicator={false}
+            onScroll={handleScroll}
+            scrollEventThrottle={16}
+            style={styles.carouselContainer}
+          >
+            {carouselItems.map((item, index) => (
+              <View key={index} style={styles.carouselCard}>
+                <Image source={item.image} style={styles.carouselImage} />
+                {/* <Text style={styles.carouselText}>{item.title}</Text> */}
+              </View>
+            ))}
+          </ScrollView>
+
+          {/* Dots for carousel navigation */}
+          <View style={styles.dotsContainer}>
+            {carouselItems.map((item, index) => (
+              <View
+                key={index}
+                style={[
+                  styles.dot,
+                  { backgroundColor: index === activeIndex ? '#0095D9' : '#ccc' },
+                ]}
+              />
+            ))}
+          </View>
+          <View style={styles.cardNew}>
+            {/* First row with icon and "Learn More" button */}
+            <View style={styles.row}>
+              {/* <Ionicon name="help-circle-outline" size={30} color="#0095D9" /> */}
+              <Image source={require('../../Assets/Image/Dana/danapro.png')} style={styles.proImage}/>
+              <TouchableOpacity style={styles.learnMoreButton}>
+                <Text style={styles.learnMoreText}>Learn More</Text>
+              </TouchableOpacity>
+            </View>
+
+            {/* Second row with input field */}
+            <View style={styles.row}>
+              <TextInput
+                style={styles.input}
+                placeholder="DANA CS Offering help?"
+                placeholderTextColor="gray"
+              />
+            </View>
+          </View>
         </View>
+        
       </View>
       <FooterMenu />
     </React.Fragment>
@@ -172,10 +252,14 @@ const styles = StyleSheet.create({
     width: 30,
     height: 30,
   },
+  proImage:{
+    width: 120,
+    height: 30,
+  },
   iconImage2: {
     width: 30,
     height: 30,
-    tintColor:'#0095D9'
+    tintColor:'#0095D9',
   },
   iconImageText: {
     fontSize: 13,
@@ -193,13 +277,71 @@ const styles = StyleSheet.create({
   card2Text: {
     flex: 1,
     fontSize: 12,
-    color:'black'
-    // textAlign: 'center',
+    color: 'black',
   },
   card2Time: {
     fontSize: 13,
     color: 'gray',
   },
+  carouselContainer: {
+    width: '100%',
+    marginVertical: 0,
+    bottom:10
+  },
+  carouselCard: {
+    width: viewportWidth,
+    justifyContent: 'center',
+    alignItems: 'center',
+    // height:90
+  },
+  carouselImage: {
+    width: viewportWidth * 0.90,
+    height: 120,
+    borderRadius: 10,
+    resizeMode: 'cover',
+  },
+  carouselText: {
+    marginTop: 10,
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#000',
+  },
+  dotsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    bottom:60
+  },
+  dot: {
+    width: 5,
+    height: 5,
+    borderRadius: 5,
+    marginHorizontal: 5,
+  },
+  cardNew: {
+    width: '90%',
+    padding: 10,
+    borderRadius: 5,
+    backgroundColor: '#fff',
+    elevation: 3,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 2,
+    marginBottom: 40,
+  },
+  learnMoreText: {
+    color: '#0095D9',
+    fontSize: 14,
+    // fontWeight: 'bold',
+  },
+  learnMoreButton: {
+    backgroundColor: 'white',    // White background inside the button
+    padding: 5,
+    borderRadius: 5,
+    borderWidth: 2,              // Border width
+    borderColor: '#0095D9',      // Blue border color
+  },
+  
 });
 
 export default DanaMaster;
