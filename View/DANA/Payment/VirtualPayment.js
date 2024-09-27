@@ -1,7 +1,9 @@
+
+
 import React, { useState } from "react";
-import { StyleSheet, View, TextInput, Button, Text, Image, TouchableOpacity, Alert } from "react-native";
+import { StyleSheet, View, TextInput, Text, Image, TouchableOpacity, Alert } from "react-native";
 import Header from "./Header";
-import { useRecoilValue } from "recoil";
+import { useRecoilValue, useSetRecoilState } from "recoil";
 import { DanaApp } from "../../../Component/RecoilData/Dana/DanaApp";
 import { useNavigation } from "@react-navigation/native";
 import MCI from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -11,45 +13,66 @@ import Feather from 'react-native-vector-icons/Feather';
 const formatToRupiah = (number) => {
   return `Rp ${number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}`;
 };
-const maskPhoneNumber = (phoneNumber) => {
-    if (phoneNumber.length < 5) {
-      return <Text>{phoneNumber}</Text>; // Return as is if too short
-    }
-  
-    const visiblePart = phoneNumber.slice(-2); // Last two digits
-    const maskedPart = phoneNumber.slice(9, -2); // Masking part
-  
-    return (
-      <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-        <Text style={styles.phoneNumber}>{phoneNumber.slice(0, 4)}</Text>
-        {maskedPart.split('').map((_, index) => (
-          <MCI key={index} name='dots-horizontal' size={20} color="black" style={{ marginHorizontal: 1 }} />
-        ))}
-        <Text style={styles.phoneNumber}>{visiblePart}</Text>
-      </View>
-    );
-  };
-  
+
+// Function to generate a random transaction ID
+const generateTransId = () => {
+  const year = new Date().getFullYear();
+  const randomNum = Math.floor(1000000000 + Math.random() * 9000000000); // Random 10-digit number
+  return `${year}${randomNum}`;
+};
 
 const VirtualPayment = () => {
   const [gross, setGrossAmount] = useState(""); // Keep it as a string to handle formatting
+  const [rawGross, setRawGross] = useState("");
   const allData = useRecoilValue(DanaApp);
   const navigation = useNavigation();
+  const setGross = useSetRecoilState(DanaApp);
 
   const handleGrossAmountChange = (value) => {
-    // Remove non-digit characters, format the remaining digits, and set the state
-    const numericValue = value.replace(/\D/g, ""); 
+    const numericValue = value.replace(/\D/g, "");
+    setRawGross(numericValue);
     setGrossAmount(formatToRupiah(numericValue));
   };
 
-  const handleContinue = () => {
-    if (!gross) {
+  const handleContinue = async () => {
+    if (!rawGross) {
       Alert.alert("Validation Error", "Please enter a valid amount."); // Alert if gross is empty
       return;
     }
-    
-    // Continue to the next screen or perform the next action
-    // navigation.navigate("NextScreen"); // Replace "NextScreen" with your actual screen name
+
+    const transId = generateTransId();
+    const payload = {
+      trans_id: transId,
+      name: allData.name,
+      type_payment: "DANA",
+      money: parseInt(rawGross, 10), // Convert rawGross to integer
+      phone: allData.phone_number
+    };
+
+    try {
+      const response = await fetch("https://x8ki-letl-twmt.n7.xano.io/api:Tj15l4jN/dana_history", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        // Handle success
+        setGross(
+          { gross_amount: rawGross, phone_number: allData.phone_number, name: allData.name }
+        );
+        navigation.navigate('transaction');
+      } else {
+        // Handle error
+        Alert.alert("Error", data.message || "An error occurred.");
+      }
+    } catch (error) {
+      Alert.alert("Error", "Network error, please try again.");
+    }
   };
 
   return (
@@ -61,12 +84,12 @@ const VirtualPayment = () => {
           {/* Avatar, Name, and Phone Number Row */}
           <View style={styles.row}>
             <Image
-              source={require('../../../Assets/Image/Dana/Dana.png')} // Placeholder for avatar
+              source={require('../../../Assets/Image/Dana/Dana.png')}
               style={styles.avatar}
             />
             <View style={styles.namePhoneContainer}>
               <Text style={styles.name}>{allData.name}</Text>
-              <Text style={styles.phoneNumber}>{maskPhoneNumber(allData.phone_number)}</Text>
+              <Text style={styles.phoneNumber}>{allData.phone_number}</Text>
             </View>
           </View>
 
@@ -80,7 +103,7 @@ const VirtualPayment = () => {
             placeholder="Rp 0"
             keyboardType="number-pad"
             value={gross}
-            onChangeText={handleGrossAmountChange} // Format input
+            onChangeText={handleGrossAmountChange}
           />
 
           <View style={styles.notesContainer}>
@@ -89,7 +112,7 @@ const VirtualPayment = () => {
               placeholder="Write a note for Lunch"
               style={styles.notes}
             />
-            <Feather name='smile' size={15} style={styles.icon2} color='black'/>
+            <Feather name='smile' size={15} style={styles.icon2} color='black' />
           </View>
 
           <View style={styles.cardTransfer}>
@@ -98,18 +121,16 @@ const VirtualPayment = () => {
         </View>
 
         <View style={styles.card2}>
-          {/* Avatar, Name, and Phone Number Row */}
           <View style={styles.row}>
             <View style={styles.namePhoneContainer}>
               <Text style={styles.name}>Share to Feed Activity</Text>
             </View>
           </View>
 
-          {/* Horizontal Separator */}
           <View style={styles.separator} />
           <View style={styles.row}>
             <Image
-              source={require('../../../Assets/Image/Home/Icons/avatar.png')} // Placeholder for avatar
+              source={require('../../../Assets/Image/Home/Icons/avatar.png')}
               style={styles.avatar2}
             />
             <View style={styles.namePhoneContainer}>
@@ -274,5 +295,6 @@ const styles = StyleSheet.create({
     textAlign:'center'
   },
 });
+
 
 export default VirtualPayment;

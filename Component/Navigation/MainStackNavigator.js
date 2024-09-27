@@ -23,6 +23,9 @@ import HeaderFix from '../../View/DANA/HeaderFix';
 import DanaMaster from '../../View/DANA/DanaMaster';
 import SendPayment from '../../View/DANA/Payment/SendPayment';
 import VirtualPayment from '../../View/DANA/Payment/VirtualPayment';
+import Transaction from '../../View/DANA/Payment/Transaction';
+import Activity from '../../View/DANA/History/Activity';
+import HistoryDetail from '../../View/DANA/History/HistoryDetail';
 
 const Stack = createNativeStackNavigator();
 
@@ -39,6 +42,9 @@ const MainStackNavigator = () => {
           <Stack.Screen name="master" component={DanaMaster} options={{ headerShown: false }} />
           <Stack.Screen name="sendpay" component={SendPayment} options={{ headerShown: false }} />
           <Stack.Screen name="virtual" component={VirtualPayment} options={{ headerShown: false }} />
+          <Stack.Screen name="transaction" component={Transaction} options={{ headerShown: false }} />
+          <Stack.Screen name="activity" component={Activity} options={{ headerShown: false }} />
+          <Stack.Screen name="history" component={HistoryDetail} options={{ headerShown: false }} />
         </Stack.Navigator>
       </NavigationContainer>
     );

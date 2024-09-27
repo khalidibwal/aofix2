@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, ScrollView, StyleSheet, Image, Dimensions, TouchableOpacity, TextInput } from 'react-native';
 import HeaderFix from './HeaderFix';
 import FooterMenu from './FooterMenu';
@@ -29,6 +29,23 @@ const DanaMaster = () => {
   const navigation = useNavigation()
   const [activeIndex, setActiveIndex] = useState(0);
 
+  const scrollViewRef = useRef(null); // Reference to the ScrollView
+
+  useEffect(() => {
+    // Auto scroll every second
+    const intervalId = setInterval(() => {
+      setActiveIndex(prevIndex => {
+        const nextIndex = (prevIndex + 1) % carouselItems.length; // Calculate the next index
+        scrollViewRef.current?.scrollTo({ x: nextIndex * viewportWidth, animated: true }); // Scroll to the next index
+        return nextIndex;
+      });
+    }, 3000); // Every second (1000 ms)
+
+    // Clear the interval when the component unmounts
+    return () => {
+      clearInterval(intervalId);
+    };
+  }, []);
   const handleScroll = (event) => {
     const contentOffsetX = event.nativeEvent.contentOffset.x;
     const index = Math.round(contentOffsetX / viewportWidth);
@@ -42,8 +59,7 @@ const DanaMaster = () => {
   return (
     <React.Fragment>
       <HeaderFix />
-      <View style={styles.container}>
-        
+      <View style={styles.container}>       
         {/* Top Section - 30% DANA Color */}
         <View style={styles.topSection}>
           <View style={styles.iconRow2}>
@@ -81,7 +97,7 @@ const DanaMaster = () => {
               </TouchableOpacity>
               <TouchableOpacity style={styles.iconItem}>
                 <Image source={require('../../Assets/Image/Dana/lazada3.png')} style={styles.iconImage} />
-                <Text style={styles.iconImageText}>Hemat s/d Rp 60rb</Text>
+                <Text style={styles.iconImageLazada}>Hemat s/d Rp 60rb</Text>
               </TouchableOpacity>
               <TouchableOpacity style={styles.iconItem}>
                 <Image source={require('../../Assets/Image/Dana/games.png')} style={styles.iconImage} />
@@ -130,6 +146,7 @@ const DanaMaster = () => {
             </View>
           </View>
           <ScrollView
+            ref={scrollViewRef} // Set the ref here
             horizontal
             pagingEnabled
             showsHorizontalScrollIndicator={false}
@@ -140,7 +157,6 @@ const DanaMaster = () => {
             {carouselItems.map((item, index) => (
               <View key={index} style={styles.carouselCard}>
                 <Image source={item.image} style={styles.carouselImage} />
-                {/* <Text style={styles.carouselText}>{item.title}</Text> */}
               </View>
             ))}
           </ScrollView>
@@ -166,7 +182,7 @@ const DanaMaster = () => {
                 <Text style={styles.learnMoreText}>Learn More</Text>
               </TouchableOpacity>
             </View>
-
+            <View style={styles.separator}/>
             {/* Second row with input field */}
             <View style={styles.row}>
               <TextInput
@@ -269,6 +285,15 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
     fontWeight: '400',
   },
+  iconImageLazada: {
+    fontSize: 13,
+    color: 'black',
+    textAlign: 'center',
+    width: '100%',
+    flexWrap: 'wrap',
+    fontWeight: '400',
+    top:10
+  },
   row: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -340,6 +365,11 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     borderWidth: 2,              // Border width
     borderColor: '#0095D9',      // Blue border color
+  },
+  separator: {
+    borderBottomColor: "#ccc",
+    borderBottomWidth: 1,
+    marginVertical: 5,
   },
   
 });

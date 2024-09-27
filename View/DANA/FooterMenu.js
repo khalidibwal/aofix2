@@ -2,8 +2,13 @@ import React from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
 import MaterialComunity from 'react-native-vector-icons/MaterialCommunityIcons';
 import Ionicon from 'react-native-vector-icons/Ionicons';
+import { useNavigation } from '@react-navigation/native';
 
 const FooterMenu = () => {
+  const navigation = useNavigation()
+  const toActivity = () =>{
+    navigation.navigate('activity')
+  }
   return (
     <View style={styles.footerContainer}>
       {/* Home Icon and Text */}
@@ -18,7 +23,7 @@ const FooterMenu = () => {
       </TouchableOpacity>
 
       {/* Activity Icon and Text */}
-      <TouchableOpacity style={styles.spacedIconContainer}>
+      <TouchableOpacity style={styles.spacedIconContainer} onPress={toActivity}>
         <View style={styles.menuItem2}>
         <Ionicon name='receipt-outline' size={25} />
           <Text style={styles.menuText}>Activity</Text>
